@@ -1,0 +1,7 @@
+contacts:
+  - name: Dan
+    phone_number: 282828
+    email: dan@fake.com
+  - name: Joe
+    phone_number: 12345
+    email: joe@real.com

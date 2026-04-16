@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+  {% if contacts %}
+    <ul>
+      {% for contact in contacts %}
+        <li>{{ contact }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>no contacts</p>
+  {% endif %}
+{% endblock %}
