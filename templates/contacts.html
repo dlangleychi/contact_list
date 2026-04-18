@@ -4,7 +4,18 @@
   {% if contacts %}
     <ul>
       {% for contact in contacts %}
-        <li>{{ contact }}</li>
+        <li>
+          <p>{{ contact.name }}</p>
+          <p>{{ contact.phone }}</p>
+          <p>{{ contact.email }}</p>
+          <p>{{ contact.category }}</p>
+          <button>edit</button>
+          <form action="{{ url_for('delete_contact', contact_id=contact.id) }}"
+                method="post">
+            <button type="submit">delete</button>
+          </form>
+        </li>
+        <br>
       {% endfor %}
     </ul>
   {% else %}
