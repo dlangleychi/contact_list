@@ -14,14 +14,23 @@ import uuid
 app = Flask(__name__)
 app.secret_key = 'secret'
 
-def load_contacts():
-    json_path = os.path.join(app.root_path, 'contact_list', 'contacts.json')
-    with open(json_path, 'r') as file:
-        contacts = json.load(file)
-        return contacts
+def get_contact_filepath():
+    if app.config['TESTING']:
+        return os.path.join(os.path.dirname(__file__), 'tests', 'contacts.json')
+    else:
+        return os.path.join(os.path.dirname(__file__), 'contact_list', 'contacts.json')
 
+def load_contacts():
+    json_path = get_contact_filepath()
+    try:
+        with open(json_path, 'r') as file:
+            contacts = json.load(file)
+            return contacts
+    except:
+        return []
+    
 def save_contacts(contacts):
-    json_path = os.path.join(app.root_path, 'contact_list', 'contacts.json')
+    json_path = get_contact_filepath()
     with open(json_path, 'w') as file:
         json.dump(contacts, file, indent=4)
 
