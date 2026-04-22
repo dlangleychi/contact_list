@@ -1,3 +1,5 @@
+# this is my implementation of a contact list app
+
 from flask import (
     Flask,
     redirect,
@@ -33,6 +35,15 @@ def save_contacts(contacts):
     json_path = get_contact_filepath()
     with open(json_path, 'w') as file:
         json.dump(contacts, file, indent=4)
+
+def get_contact(contact_id, contacts):
+    contacts_filtered = [contact for contact in contacts 
+               if contact['id'] == contact_id]
+    
+    if contacts_filtered:
+        return contacts_filtered.pop()
+
+    return None
 
 @app.route('/')
 def index():
@@ -76,6 +87,38 @@ def delete_contact(contact_id):
     contacts = load_contacts()
     contacts = [contact for contact in contacts if contact['id'] != contact_id]
     save_contacts(contacts)
+    return redirect(url_for('get_contacts'))
+
+@app.route('/contacts/<contact_id>/edit')
+def edit_contact(contact_id):
+    contacts = load_contacts()
+    contact = get_contact(contact_id, contacts)
+
+    if contact:
+        return render_template('update_contact.html', contact=contact)
+    
+    return redirect(url_for('get_contacts'))
+
+@app.route('/contacts/<contact_id>/update', methods=['POST'])
+def update_contact(contact_id):
+    contacts = load_contacts()
+    contact = get_contact(contact_id, contacts)
+
+    if contact:
+        name = request.form['name'].strip()
+        phone = request.form['phone'].strip()
+        email = request.form['email'].strip()
+        category = request.form['category'].strip()
+
+        contact['name'] = name
+        contact['phone'] = phone
+        contact['email'] = email
+        contact['category'] = category
+
+        save_contacts(contacts)
+
+        return redirect(url_for('get_contacts'))
+
     return redirect(url_for('get_contacts'))
 
 if __name__ == '__main__':

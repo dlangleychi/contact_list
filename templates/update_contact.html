@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+  <form action="{{ url_for('update_contact', contact_id=contact.id) }}" method="post">
+    <div>
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" value="{{ contact.name }}" required>
+    </div>
+    <br>
+    <div>
+      <label for="phone">Phone:</label>
+      <input type="tel" id="phone" name="phone" value="{{ contact.phone }}">
+    </div>
+    <br>
+    <div>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" value="{{ contact.email }}" required>
+    </div>
+    <br>
+    <div>
+      <label for="category">Category:</label>
+      <input type="text" id="category" name="category" value="{{ contact.category }}" required>
+    </div>
+    <br>
+    <button type="submit">Submit</button>
+
+  </form>
+{% endblock %}
