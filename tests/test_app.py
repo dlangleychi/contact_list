@@ -17,7 +17,6 @@ class ContactList(unittest.TestCase):
     def tearDown(self):
         os.remove(self.json_path)
 
-
     def test_index_redirect(self):
         response = self.client.get('/')
         self.assertEqual(response.status_code, 302)

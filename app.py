@@ -28,6 +28,10 @@ def load_contacts():
         with open(json_path, 'r') as file:
             contacts = json.load(file)
             return contacts
+    except FileNotFoundError:
+        return []
+    except json.JSONDecodeError:
+        return []
     except:
         return []
     
@@ -37,17 +41,13 @@ def save_contacts(contacts):
         json.dump(contacts, file, indent=4)
 
 def get_contact(contact_id, contacts):
-    contacts_filtered = [contact for contact in contacts 
-               if contact['id'] == contact_id]
-    
-    if contacts_filtered:
-        return contacts_filtered.pop()
-
+    for contact in contacts:
+        if contact['id'] == contact_id:
+            return contact
     return None
 
 @app.route('/')
 def index():
-    # return render_template('index.html')
     return redirect(url_for('get_contacts'))
 
 @app.route('/contacts')
