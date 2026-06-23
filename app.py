@@ -13,6 +13,8 @@ import os
 
 import uuid
 
+from contact_list.database_persistence import DatabasePersistence
+
 app = Flask(__name__)
 app.secret_key = 'secret'
 
