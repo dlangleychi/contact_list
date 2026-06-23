@@ -1,4 +1,6 @@
-# this is my implementation of a contact list app
+# this is my implementation of a contact list app with a database
+
+import secrets
 
 from flask import (
     Flask,
@@ -16,7 +18,7 @@ import uuid
 from contact_list.database_persistence import DatabasePersistence
 
 app = Flask(__name__)
-app.secret_key = 'secret'
+app.secret_key = secrets.token_hex(32)
 
 def get_contact_filepath():
     if app.config['TESTING']:
