@@ -14,8 +14,6 @@ from flask import (
 import json
 import os
 
-import uuid
-
 from contact_list.database_persistence import DatabasePersistence
 
 app = Flask(__name__)
@@ -61,20 +59,15 @@ def index():
 
 @app.route('/contacts')
 def get_contacts():
-    # contacts = load_contacts()
     contacts = g.storage.all_contacts()
-    # print(type(contacts), contacts)
     return render_template('contacts.html',
                            contacts=contacts)
-
 @app.route('/contacts/new')
 def add_contact():
     return render_template('new_contact.html')
 
 @app.route('/contacts', methods=['POST'])
 def create_contact():
-    contacts = load_contacts()
-
     name = request.form['name'].strip()
     phone = request.form['phone'].strip()
     email = request.form['email'].strip()
@@ -82,53 +75,33 @@ def create_contact():
 
     g.storage.create_new_contact(name, phone, email, category)
 
-    contacts.append(
-        {
-            'id': uuid.uuid4().hex,
-            'name': name,
-            'phone': phone,
-            'email': email,
-            'category': category
-        }
-    )
-    save_contacts(contacts)
-
     return redirect(url_for('get_contacts'))
 
-@app.route('/contacts/<contact_id>/delete', methods=['POST'])
+@app.route('/contacts/<int:contact_id>/delete', methods=['POST'])
 def delete_contact(contact_id):
-    contacts = load_contacts()
-    contacts = [contact for contact in contacts if contact['id'] != contact_id]
-    save_contacts(contacts)
+    g.storage.delete_contact(contact_id)
     return redirect(url_for('get_contacts'))
 
-@app.route('/contacts/<contact_id>/edit')
+@app.route('/contacts/<int:contact_id>/edit')
 def edit_contact(contact_id):
-    contacts = load_contacts()
-    contact = get_contact(contact_id, contacts)
+    contact = g.storage.find_contact(contact_id)
 
     if contact:
         return render_template('update_contact.html', contact=contact)
     
     return redirect(url_for('get_contacts'))
 
-@app.route('/contacts/<contact_id>/update', methods=['POST'])
+@app.route('/contacts/<int:contact_id>/update', methods=['POST'])
 def update_contact(contact_id):
-    contacts = load_contacts()
-    contact = get_contact(contact_id, contacts)
-
+    contact = g.storage.find_contact(contact_id)
+    
     if contact:
         name = request.form['name'].strip()
         phone = request.form['phone'].strip()
         email = request.form['email'].strip()
         category = request.form['category'].strip()
 
-        contact['name'] = name
-        contact['phone'] = phone
-        contact['email'] = email
-        contact['category'] = category
-
-        save_contacts(contacts)
+        g.storage.update_contact(contact_id, name, phone, email, category)
 
         return redirect(url_for('get_contacts'))
 

@@ -56,9 +56,18 @@ class DatabasePersistence:
 
         contacts = [dict(result) for result in results]
 
-        # print(type(contacts), contacts)
         return contacts
     
+    def find_contact(self, contact_id):
+        query = "SELECT * FROM contacts WHERE id = %s"
+        logger.info("Executing query: %s with contact_id: %s", query, contact_id)
+        with self._database_connect() as conn:
+            with conn.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(query, (contact_id,))
+                contact = dict(cursor.fetchone())
+
+        return contact
+
     def create_new_contact(self, name, phone, email, category):
         query = '''
             INSERT INTO contacts (name, phone, email, category)
@@ -69,3 +78,27 @@ class DatabasePersistence:
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(query, (name, phone, email, category))
+
+    def delete_contact(self, contact_id):
+        query = "DELETE FROM contacts WHERE id = %s;"
+        logger.info("Executing query: %s with contact_id: %s", query, contact_id) 
+        with self._database_connect() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, (contact_id,))
+
+    def update_contact(self, contact_id, name, phone, email, category):
+        query = '''
+            UPDATE contacts
+            SET
+                name = %s,
+                phone  = %s,
+                email = %s,
+                category = %s
+            WHERE id = %s;
+        '''
+        logger.info("Executing query: %s with contact_id: %s name: %s \
+                    phone: %s email: %s category: %s", 
+                    contact_id, query, name, phone, email, category) 
+        with self._database_connect() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, (name, phone, email, category, contact_id))
