@@ -11,47 +11,14 @@ from flask import (
     url_for,
 )
 
-import json
-import os
-
 from contact_list.database_persistence import DatabasePersistence
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
-
-def get_contact_filepath():
-    if app.config['TESTING']:
-        return os.path.join(os.path.dirname(__file__), 'tests', 'contacts.json')
-    else:
-        return os.path.join(os.path.dirname(__file__), 'contact_list', 'contacts.json')
     
 @app.before_request
 def load_db():
     g.storage = DatabasePersistence()
-
-def load_contacts():
-    json_path = get_contact_filepath()
-    try:
-        with open(json_path, 'r') as file:
-            contacts = json.load(file)
-            return contacts
-    except FileNotFoundError:
-        return []
-    except json.JSONDecodeError:
-        return []
-    except:
-        return []
-    
-def save_contacts(contacts):
-    json_path = get_contact_filepath()
-    with open(json_path, 'w') as file:
-        json.dump(contacts, file, indent=4)
-
-def get_contact(contact_id, contacts):
-    for contact in contacts:
-        if contact['id'] == contact_id:
-            return contact
-    return None
 
 @app.route('/')
 def index():

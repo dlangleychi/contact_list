@@ -1,3 +1,5 @@
+# this is database class
+
 import os
 
 from contextlib import contextmanager
@@ -64,9 +66,12 @@ class DatabasePersistence:
         with self._database_connect() as conn:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (contact_id,))
-                contact = dict(cursor.fetchone())
+                result = cursor.fetchone()
 
-        return contact
+        if result is None:
+            return None
+
+        return dict(result)
 
     def create_new_contact(self, name, phone, email, category):
         query = '''
@@ -98,7 +103,7 @@ class DatabasePersistence:
         '''
         logger.info("Executing query: %s with contact_id: %s name: %s \
                     phone: %s email: %s category: %s", 
-                    contact_id, query, name, phone, email, category) 
+                    query, contact_id, name, phone, email, category) 
         with self._database_connect() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(query, (name, phone, email, category, contact_id))

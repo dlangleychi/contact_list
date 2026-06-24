@@ -1,7 +1,7 @@
 # these are the unit tests
 
 import unittest
-from app import app, get_contact_filepath
+from app import app
 import os
 import json
 
@@ -10,12 +10,13 @@ class ContactList(unittest.TestCase):
     def setUp(self):
         app.config['TESTING'] = True
         self.client = app.test_client()
-        self.json_path = get_contact_filepath()
-        with open(self.json_path, 'w') as f:
-            pass
+        # self.json_path = get_contact_filepath()
+        # with open(self.json_path, 'w') as f:
+        #     pass
 
     def tearDown(self):
-        os.remove(self.json_path)
+        pass
+        # os.remove(self.json_path)
 
     def test_index_redirect(self):
         response = self.client.get('/')
