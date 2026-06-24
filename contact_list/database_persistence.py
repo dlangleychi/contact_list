@@ -45,3 +45,16 @@ class DatabasePersistence:
                             category text
                         );
                     """)
+
+    def all_contacts(self):
+        query = "SELECT * FROM contacts;"
+        logger.info("Executing query: %s", query) 
+        with self._database_connect() as conn:
+            with conn.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(query)
+                results = cursor.fetchall()
+
+        contacts = [dict(result) for result in results]
+
+        # print(type(contacts), contacts)
+        return contacts

@@ -4,6 +4,7 @@ import secrets
 
 from flask import (
     Flask,
+    g,
     redirect,
     render_template,
     request,
@@ -25,6 +26,10 @@ def get_contact_filepath():
         return os.path.join(os.path.dirname(__file__), 'tests', 'contacts.json')
     else:
         return os.path.join(os.path.dirname(__file__), 'contact_list', 'contacts.json')
+    
+@app.before_request
+def load_db():
+    g.storage = DatabasePersistence()
 
 def load_contacts():
     json_path = get_contact_filepath()
@@ -57,6 +62,8 @@ def index():
 @app.route('/contacts')
 def get_contacts():
     contacts = load_contacts()
+    contacts = g.storage.all_contacts()
+    print(type(contacts), contacts)
     return render_template('contacts.html',
                            contacts=contacts)
 
