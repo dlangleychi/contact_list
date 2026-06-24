@@ -58,3 +58,14 @@ class DatabasePersistence:
 
         # print(type(contacts), contacts)
         return contacts
+    
+    def create_new_contact(self, name, phone, email, category):
+        query = '''
+            INSERT INTO contacts (name, phone, email, category)
+            VALUES (%s, %s, %s, %s);
+        '''
+        logger.info("Executing query: %s with name: %s phone: %s email: %s category: %s", 
+                    query, name, phone, email, category) 
+        with self._database_connect() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, (name, phone, email, category))

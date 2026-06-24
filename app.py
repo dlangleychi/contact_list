@@ -61,9 +61,9 @@ def index():
 
 @app.route('/contacts')
 def get_contacts():
-    contacts = load_contacts()
+    # contacts = load_contacts()
     contacts = g.storage.all_contacts()
-    print(type(contacts), contacts)
+    # print(type(contacts), contacts)
     return render_template('contacts.html',
                            contacts=contacts)
 
@@ -79,6 +79,8 @@ def create_contact():
     phone = request.form['phone'].strip()
     email = request.form['email'].strip()
     category = request.form['category'].strip()
+
+    g.storage.create_new_contact(name, phone, email, category)
 
     contacts.append(
         {
